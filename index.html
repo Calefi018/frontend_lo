@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teste de Localização</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
+        .container { background-color: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); text-align: center; }
+        h1 { color: #333; }
+        #status { font-weight: bold; margin-top: 1rem; color: #555; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; color: white; background-color: #007bff; transition: background-color 0.3s; }
+        button:hover { background-color: #0056b3; }
+        #prosseguirBtn { display: none; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste de Rastreamento</h1>
+        <div id="status">Buscando sua localização...</div>
+        <button id="prosseguirBtn">Prosseguir</button>
+    </div>
+
+    <script>
+        // SUBSTITUA ESTA URL PELA URL DO SEU SERVIDOR NO RENDER
+        const BACKEND_API_URL = 'https://sua-url-do-render.onrender.com';
+
+        const statusDiv = document.getElementById('status');
+        const prosseguirBtn = document.getElementById('prosseguirBtn');
+        let latitude = null;
+        let longitude = null;
+
+        function enviarDados(prosseguir) {
+            fetch(`${BACKEND_API_URL}/api/location`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ latitude, longitude, prosseguiu })
+            })
+            .then(response => {
+                if (response.ok) {
+                    if (prosseguir) {
+                        statusDiv.textContent = 'Localização enviada. Prosseguindo...';
+                    }
+                } else {
+                    statusDiv.textContent = 'Erro ao enviar localização.';
+                }
+            })
+            .catch(error => {
+                statusDiv.textContent = 'Erro de rede. Tente novamente.';
+                console.error('Erro de rede:', error);
+            });
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    latitude = position.coords.latitude;
+                    longitude = position.coords.longitude;
+                    
+                    statusDiv.textContent = 'Localização obtida com sucesso!';
+                    prosseguirBtn.style.display = 'block';
+                    
+                    enviarDados(false);
+
+                }, error => {
+                    statusDiv.textContent = 'Não foi possível obter sua localização. Verifique as permissões.';
+                    console.error(error);
+                });
+            } else {
+                statusDiv.textContent = 'Geolocalização não é suportada pelo seu navegador.';
+            }
+        }
+
+        prosseguirBtn.addEventListener('click', () => {
+            enviarDados(true);
+            prosseguirBtn.disabled = true;
+            prosseguirBtn.textContent = 'Prosseguindo...';
+        });
+
+        window.onload = getLocation;
+    </script>
+</body>
+</html>
